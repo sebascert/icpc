@@ -17,10 +17,7 @@ typedef vector<lli> vi;
 #define all(c) c.begin(), c.end()
 #define fore(i, a, b) for (lli i = (a), I = (b); i < I; i++)
 #define ford(i, a, b) for (lli i = (a), I = (b); i-- > I;)
-
 #define perr(x) cerr << #x << " " << (x) << endl
-
-const lli INF = 1e18, NINF = -1e18;
 
 int main() {_
 
