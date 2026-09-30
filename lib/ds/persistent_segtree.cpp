@@ -1,41 +1,41 @@
 #include "template.hpp"
 
-const lli NEUT = 0;
-#define oper(a, b) (a + b)
 struct Segtree {
-	vi st, L, R;
-	int n, rt;
-	Segtree(int n) : st(1, NEUT), L(1, 0), R(1, 0), n(n), rt(0) {}
-	int new_node(lli v, int l = 0, int r = 0) {
-		int ks = sz(st);
-		st.pb(v);
-		L.pb(l);
-		R.pb(r);
-		return ks;
-	}
-	int upd(int k, int s, int e, int p, lli v) {
-		int ks = new_node(st[k], L[k], R[k]);
-		if (s + 1 == e) {
-			st[ks] = v;
-			return ks;
+#define mid ((l + r) / 2)
+#define left(u) (st[u].l)
+#define right(u) (st[u].r)
+	struct Node {
+		lli x;
+		int l, r;
+		Node(lli x = 0, int l = 0, int r = 0) : x(x), l(l), r(r) {}
+		Node operator+(const Node& n) { return Node(x + n.x); }
+		Node(const Node&) = default;
+		Node& operator=(const Node& n) {
+			x = n.x;
+			return *this;
 		}
-		int m = (s + e) / 2, ps;
-		if (p < m)
-			ps = upd(L[ks], s, m, p, v), L[ks] = ps;
-		else
-			ps = upd(R[ks], m, e, p, v), R[ks] = ps;
-		st[ks] = oper(st[L[ks]], st[R[ks]]);
-		return ks;
+	};
+	int n;
+	vector<Node> st;
+	Segtree(int n) : n(n), st(1) {}
+	int update(int u, int l, int r, int i, lli val) {
+		int v = sz(st);
+		st.pb(st[u]);
+		if(l == r) {
+			st[v] = Node(val); // assignment
+			return v;
+		}
+		if(i <= mid) left(v) = update(left(v), l, mid, i, val); // C++17
+		else right(v) = update(right(v), mid + 1, r, i, val);	// C++17
+		st[v] = st[left(v)] + st[right(v)];
+		return v;
 	}
-	lli query(int k, int s, int e, int a, int b) {
-		if (e <= a || b <= s)
-			return NEUT;
-		if (a <= s && e <= b)
-			return st[k];
-		int m = (s + e) / 2;
-		return oper(query(L[k], s, m, a, b), query(R[k], m, e, a, b));
+	Node query(int u, int l, int r, int ll, int rr) {
+		if(l > r || r < ll || l > rr) return Node();
+		if(ll <= l && r <= rr) return st[u];
+		return query(left(u), l, mid, ll, rr) +
+		       query(right(u), mid + 1, r, ll, rr);
 	}
-	int upd(int k, int p, lli v) { return rt = upd(k, 0, n, p, v); }
-	int upd(int p, lli v) { return upd(rt, p, v); } // update on last root;
-	lli query(int k, int l, int r) { return query(k, 0, n, l, r); } //[l,r)
+	int update(int i, lli x, int v) { return update(v, 0, n - 1, i, x); }
+	lli query(int l, int r, int v) { return query(v, 0, n - 1, l, r).x; }
 };

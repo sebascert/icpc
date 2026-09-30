@@ -3,42 +3,27 @@
 using R = double;
 using U = uint64_t;
 
-bool f(R x);
-
+#define bcv(x, y) memcpy(&y, &x, sizeof(y));
 const U SBIT = ((U)1 << (sizeof(U) * 8 - 1));
 U encode(R x) {
-	U u;
-	memcpy(&u, &x, sizeof(U));
-	return (u & SBIT) ? ~u : u ^ SBIT;
+	U y;
+	bcv(x, y);
+	return (y & SBIT) ? ~y : y ^ SBIT;
 }
-R decode(U u) {
-	R x;
-	u = (u & SBIT) ? u ^ SBIT : ~u;
-	memcpy(&x, &u, sizeof(x));
-	return x;
-}
-R rsearch(R l, R r) {
-	// assert(sizeof(R) == sizeof(U));
-	U ll = encode(l), rr = encode(r);
-	while (ll < rr) {
-		U m = ll + (rr - ll) / 2;
-		f(decode(m)) ? rr = m : ll = m + 1;
-	}
-	return decode(ll);
+R decode(U x) {
+	R y;
+	x = (x & SBIT) ? x ^ SBIT : ~x;
+	bcv(x, y);
+	return y;
 }
 
-R prsearch(R l, R r) {
-#define conv(x, y) memcpy(&y, &x, sizeof(U))
+bool f(R x);
+R rbsearch(R l, R r) {
 	// assert(sizeof(R) == sizeof(U));
-	// assert(l > 0 && r > 0);
-	R x;
-	U ll, rr, m;
-	conv(l, ll), conv(r, rr);
-	while (ll < rr) {
-		m = ll + (rr - ll) / 2;
-		conv(m, x);
-		f(x) ? rr = m : ll = m + 1;
+	U ll = encode(l), rr = encode(r);
+	while(rr - ll > 1) {
+		U m = ll + (rr - ll) / 2;
+		(f(decode(m)) ? rr : ll) = m;
 	}
-	conv(rr, x);
-	return x;
+	return decode(ll);
 }

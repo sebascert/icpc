@@ -4,9 +4,9 @@
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
 template <typename T, typename V>
-using itree =
-    tree<T, V, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-template <typename T> using iset = itree<T, null_type>;
+using imap =
+	tree<T, V, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+template <typename T> using iset = imap<T, null_type>;
 
 // Usage
 // find_by_order(k)

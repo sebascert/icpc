@@ -14,14 +14,13 @@ void tjn(int u) {
 	lw[u] = idx[u] = ++qidx;
 	st.push(u);
 	cmp[u] = -2;
-	for (int v : g[u]) {
-		if (!idx[v] || cmp[v] == -2) {
-			if (!idx[v])
-				tjn(v);
+	for(int v: g[u]) {
+		if(!idx[v] || cmp[v] == -2) {
+			if(!idx[v]) tjn(v);
 			lw[u] = min(lw[u], lw[v]);
 		}
 	}
-	if (lw[u] == idx[u]) {
+	if(lw[u] == idx[u]) {
 		int x;
 		// int l = -1; (2SAT)
 		do {
@@ -30,7 +29,7 @@ void tjn(int u) {
 			cmp[x] = qcmp;
 			// if (min(x, neg(x)) < nvar) (2SAT)
 			// 	l = x;
-		} while (x != u);
+		} while(x != u);
 		// if (l != -1) (2SAT)
 		// 	truth[qcmp] = cmp[neg(l)] < 0;
 		qcmp++;
@@ -42,7 +41,7 @@ void scc() {
 	qidx = 0;
 	memset(cmp, -1, sizeof(cmp));
 	qcmp = 0;
-	fore(i, 0, n) if (!idx[i]) tjn(i);
+	fore(i, 0, n) if(!idx[i]) tjn(i);
 
 	crep.resize(qcmp);
 	fore(u, 0, n) crep[cmp[u]] = u;

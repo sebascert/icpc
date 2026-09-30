@@ -1,47 +1,55 @@
 #include "template.hpp"
 
-struct vertex {
-	map<char, int> next, go;
-	char pch;
-	int p, link;
-	vector<int> leaf;
-	vertex(int p = -1, char pch = -1) : pch(pch), p(p), link(-1) {}
-};
-vector<vertex> t;
-void aho_init() {
-	t.clear();
-	t.push_back(vertex());
-}
-void add_string(string s, int id) {
-	int v = 0;
-	for (char c : s) {
-		if (!t[v].next.count(c)) {
-			t[v].next[c] = t.size();
-			t.push_back(vertex(v, c));
+struct Aho {
+	const static int K = 26;
+	int idx(char c) { return c - 'a'; }
+	struct Node {
+		vector<int> leaf;
+		int p, pch, ln, out, next[K], go[K];
+		Node(int p = -1, int pch = -1)
+		    : p(p), pch(pch), ln(-1), out(-1) {
+			memset(next, 0, sizeof(next));
+			memset(go, -1, sizeof(go));
 		}
-		v = t[v].next[c];
+	};
+	vector<Node> t;
+	Aho() : t(1) {}
+	void add(string& s, int i) {
+		int u = 0;
+		for(int c: s) {
+			c = idx(c);
+			if(!t[u].next[c]) {
+				t[u].next[c] = t[u].go[c] = sz(t);
+				t.emplace_back(u, c);
+			}
+			u = t[u].next[c];
+		}
+		t[u].leaf.pb(i);
 	}
-	t[v].leaf.push_back(id);
-}
-int go(int v, char c);
-int get_link(int v) {
-	if (t[v].link < 0) {
-		if (!v || !t[v].p)
-			t[v].link = 0;
-		else
-			t[v].link = go(get_link(t[v].p), t[v].pch);
-		// int l=t[v].link;
-		// get_link(l);
-		// t[v].leaf.insert(t[v].leaf.end(), all(t[l].leaf));
+	int get_link(int u) {
+		if(t[u].ln < 0) {
+			t[u].ln = !u || !t[u].p ?
+					  0 :
+					  go(get_link(t[u].p), t[u].pch);
+			// if(u) {
+			// 	int v = t[u].ln;
+			// 	get_link(v);
+			// 	t[u].leaf.insert(t[u].leaf.end(),
+			// all(t[v].leaf));
+			// }
+		}
+		return t[u].ln;
 	}
-	return t[v].link;
-}
-int go(int v, char c) {
-	if (!t[v].go.count(c)) {
-		if (t[v].next.count(c))
-			t[v].go[c] = t[v].next[c];
-		else
-			t[v].go[c] = v == 0 ? 0 : go(get_link(v), c);
+	int get_dict(int u) {
+		if(t[u].out < 0) {
+			int v = get_link(u);
+			t[u].out = !v ? 0 : (sz(t[v].leaf) ? v : get_dict(v));
+		}
+		return t[u].out;
 	}
-	return t[v].go[c];
-}
+	int go(int u, int c) {
+		if(t[u].go[c] < 0) t[u].go[c] = !u ? 0 : go(get_link(u), c);
+		return t[u].go[c];
+	}
+	int go(int u, char c) { return go(u, idx(c)); }
+};

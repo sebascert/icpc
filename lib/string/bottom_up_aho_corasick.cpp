@@ -15,9 +15,9 @@ void aho_init() {
 }
 void add(string s, int id) {
 	int v = 0;
-	for (auto x : s) {
+	for(auto x: s) {
 		int c = x - A;
-		if (t[v].next[c] == -1) {
+		if(t[v].next[c] == -1) {
 			t[v].next[c] = t[v].go[c] = sz(t);
 			t.pb(vertex(v, c));
 		}
@@ -30,18 +30,17 @@ void BFS() {
 	queue<int> q;
 	q.push(0);
 	t[0].link = t[0].nl = 0;
-	while (!q.empty()) {
+	while(!q.empty()) {
 		int x = q.front();
 		q.pop();
 		fore(c, 0, C) {
-			if (t[x].next[c] == -1)
-				continue;
+			if(t[x].next[c] == -1) continue;
 			int y = t[x].next[c];
 			t[y].link = x ? t[t[x].link].go[c] : 0;
 			int link = t[y].link;
 			t[y].nl = sz(t[link].leaf) ? link : t[link].nl;
-			for (int i = 0; i < C; i++)
-				if (t[y].next[i] == -1)
+			for(int i = 0; i < C; i++)
+				if(t[y].next[i] == -1)
 					t[y].go[i] = t[link].go[i];
 			q.push(y);
 		}

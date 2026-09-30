@@ -1,40 +1,32 @@
 #include "template.hpp"
 
-const int N = 0 + 1, logN = log2(N) + 2;
+const int N = 0 + 1, logN = __lg(N);
 
 int n;
 vector<int> t[N];
 
 int st[logN][N], d[N];
-void dfs(int u, int p) {
+void lca_dfs(int u, int p) {
 	st[0][u] = p;
 	d[u] = d[p] + 1;
-	for (int v : t[u]) {
-		if (v == p)
-			continue;
-		dfs(v, u);
-	}
+	for(int v: t[u])
+		if(v != p) lca_dfs(v, u);
 }
-
-int lca(int u, int v) {
-	if (d[u] < d[v])
-		swap(u, v);
-	ford(k, logN, 0) {
-		if (d[u] - (1 << k) >= d[v])
-			u = st[k][u];
-	}
-	if (u == v)
-		return u;
-	ford(k, logN, 0) {
-		if (st[k][u] != st[k][v])
-			u = st[k][u], v = st[k][v];
-	}
-	return st[0][u];
-}
-
-void lca_init() {
+void lca_init(int u) {
 	d[n] = 0;
-	dfs(0, n);
-	fore(k, 1, logN) fore(u, 0, n) st[k][u] =
-	    st[k - 1][u] == n ? n : st[k - 1][st[k - 1][u]];
+	lca_dfs(u, n);
+	fore(b, 1, logN) fore(u, 0, n) st[b][u] =
+		st[b - 1][u] == n ? n : st[b - 1][st[b - 1][u]];
+}
+int kanc(int u, int k) {
+	int x = d[u] - k;
+	ford(b, logN, 0) if(d[u] - (1 << b) >= x) u = st[b][u];
+	return u;
+}
+int lca(int u, int v) {
+	if(d[u] < d[v]) swap(u, v);
+	ford(b, logN, 0) if(d[u] - (1 << b) >= d[v]) u = st[b][u];
+	if(u == v) return u;
+	ford(b, logN, 0) if(st[b][u] != st[b][v]) u = st[b][u], v = st[b][v];
+	return st[0][u];
 }

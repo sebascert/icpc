@@ -1,52 +1,33 @@
 #include "template.hpp"
+#include "ds/dsu.hpp"
 
-const int N = 100;
-int n;
-vector<int> g[N];
+const int N = 0 + 1;
+int n, m;
+vector<int> t[N];
 
-struct edge {
-	int u, v, comp;
-	bool bridge;
-};
-vector<edge> e;
-void add_edge(int u, int v) {
-	g[u].pb(e.size());
-	g[v].pb(e.size());
-	e.pb((edge){u, v, -1, false});
-}
-int D[N], B[N], T;
-int nbc;
-int art[N];
-stack<int> st;
-void dfs(int u, int pe) {
-	B[u] = D[u] = T++;
-	for (int ne : g[u])
-		if (ne != pe) {
-			int v = e[ne].u ^ e[ne].v ^ u;
-			if (D[v] < 0) {
-				st.push(ne);
-				dfs(v, ne);
-				if (B[v] > D[u])
-					e[ne].bridge = true;
-				if (B[v] >= D[u]) {
-					art[u]++;
-					int last;
-					do {
-						last = st.top();
-						st.pop();
-						e[last].comp = nbc;
-					} while (last != ne);
-					nbc++;
-				}
-				B[u] = min(B[u], B[v]);
-			} else if (D[v] < D[u])
-				st.push(ne), B[u] = min(B[u], D[v]);
+DSU dsu(0);
+int d[N], art[N];
+int dfs(int u, int p) {
+	int dp = d[u] = d[p] + 1;
+	for(int v: t[u]) {
+		if(v == p) continue;
+		if(!d[v]) { // span edge
+			dp = min(dp, dfs(v, u));
+		} else if(d[v] < d[u]) { // back edge
+			dp = min(dp, d[v]);
 		}
+	}
+	art[p] += dp >= d[p];
+	if(p != n) {
+		if(dp <= d[u]) { // bridge (u,p)
+		} else {
+			dsu.unite(u, p);
+		}
+	} else art[u]--; // root
+	return dp;
 }
-
-void doit() {
-	memset(D, -1, sizeof(D));
-	memset(art, 0, sizeof(art));
-	nbc = T = 0;
-	fore(i, 0, n) if (D[i] < 0) dfs(i, -1), art[i]--;
+void art_bri_bic() {
+	d[n] = 0;
+	dsu = DSU(n);
+	dfs(0, n);
 }

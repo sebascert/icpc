@@ -1,0 +1,3 @@
+- Math
+    - matrix invariants
+    - area of a polygon formula (sum)

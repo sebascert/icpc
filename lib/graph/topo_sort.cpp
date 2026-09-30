@@ -5,20 +5,20 @@ int n;
 vector<int> g[N];
 
 // sort source to sink, for sink to source flip every edge
+// if sz(sort)<n there is a cycle
 vector<int> tsort() {
-	vector<int> r;
-	priority_queue<int> q;
+	queue<int> q;
 	vector<int> d(2 * n, 0);
-	fore(i, 0, n) fore(j, 0, g[i].size()) d[g[i][j]]++;
-	fore(i, 0, n) if (!d[i]) q.push(-i);
-	while (!q.empty()) {
-		int x = -q.top();
+	fore(u, 0, n) for(int v: g[u]) d[v]++;
+	fore(u, 0, n) if(!d[u]) q.push(u);
+	vector<int> r;
+	while(!q.empty()) {
+		int u = q.front();
 		q.pop();
-		r.pb(x);
-		fore(i, 0, g[x].size()) {
-			d[g[x][i]]--;
-			if (!d[g[x][i]])
-				q.push(-g[x][i]);
+		r.pb(u);
+		for(int v: g[u]) {
+			d[v]--;
+			if(!d[v]) q.push(v);
 		}
 	}
 	return r;

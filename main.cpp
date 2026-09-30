@@ -1,15 +1,12 @@
+// #pragma GCC optimize("unroll-loops","Ofast")
 // vim X.cpp in && g++ -Wall -fsanitize=address,undefined X.cpp && ./a.out <in
-
 #include <bits/stdc++.h>
 using namespace std;
-
 typedef long long lli;
 typedef long double ld;
 typedef pair<lli, lli> ii;
 typedef vector<lli> vi;
-
 #define endl '\n'
-#define _ ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0);
 #define f first
 #define s second
 #define pb push_back
@@ -19,7 +16,9 @@ typedef vector<lli> vi;
 #define ford(i, a, b) for (lli i = (a), I = (b); i-- > I;)
 #define perr(x) cerr << #x << " " << (x) << endl
 
-int main() {_
+int main() {ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+	lli T;cin>>T;fore(tc,0,T){
+	}
 
 	return 0;
 }

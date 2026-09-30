@@ -12,16 +12,15 @@ void mult(const Matrix a, const Matrix b, Matrix m) {
 	Matrix c;
 	memset(c, 0, sizeof(Matrix));
 	fore(i, 0, K) fore(j, 0, K) fore(k, 0, K) c[i][j] =
-	    (c[i][j] + (lli)a[i][k] * b[k][j]) % mod;
+		(c[i][j] + (lli)a[i][k] * b[k][j]) % mod;
 	memcpy(m, c, sizeof(Matrix));
 }
 void binexp(const Matrix m, lli b, Matrix c) {
 	iden(c);
 	Matrix a;
 	memcpy(a, m, sizeof(Matrix));
-	while (b) {
-		if (b & 1)
-			mult(a, c, c);
+	while(b) {
+		if(b & 1) mult(a, c, c);
 		mult(a, a, a);
 		b /= 2;
 	}

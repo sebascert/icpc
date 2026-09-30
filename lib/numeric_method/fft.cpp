@@ -17,21 +17,18 @@ int R[MAXN + 9];
 int mulmod(lli a, lli b) { return a * b % MOD; }
 int addmod(int a, int b) {
 	int r = a + b;
-	if (r >= MOD)
-		r -= MOD;
+	if(r >= MOD) r -= MOD;
 	return r;
 }
 int submod(int a, int b) {
 	int r = a - b;
-	if (r < 0)
-		r += MOD;
+	if(r < 0) r += MOD;
 	return r;
 }
 int pm(lli a, lli e) {
 	int r = 1;
-	while (e) {
-		if (e & 1)
-			r = mulmod(r, a);
+	while(e) {
+		if(e & 1) r = mulmod(r, a);
 		e >>= 1;
 		a = mulmod(a, a);
 	}
@@ -44,9 +41,9 @@ struct CD {
 	CD(tf x) : x(x) {}
 	CD() {}
 };
-CD operator*(const CD &a, const CD &b) { return CD(mulmod(a.x, b.x)); }
-CD operator+(const CD &a, const CD &b) { return CD(addmod(a.x, b.x)); }
-CD operator-(const CD &a, const CD &b) { return CD(submod(a.x, b.x)); }
+CD operator*(const CD& a, const CD& b) { return CD(mulmod(a.x, b.x)); }
+CD operator+(const CD& a, const CD& b) { return CD(addmod(a.x, b.x)); }
+CD operator-(const CD& a, const CD& b) { return CD(submod(a.x, b.x)); }
 vector<tf> rts(MAXN + 9, -1);
 CD root(int n, bool inv) {
 	tf r = rts[n] < 0 ? rts[n] = pm(RT, (MOD - 1) / n) : rts[n];
@@ -54,15 +51,15 @@ CD root(int n, bool inv) {
 }
 
 CD cp1[MAXN + 9], cp2[MAXN + 9];
-void dft(CD *a, int n, bool inv) {
-	fore(i, 0, n) if (R[i] < i) swap(a[R[i]], a[i]);
-	for (int m = 2; m <= n; m *= 2) {
+void dft(CD* a, int n, bool inv) {
+	fore(i, 0, n) if(R[i] < i) swap(a[R[i]], a[i]);
+	for(int m = 2; m <= n; m *= 2) {
 		// double z=2*pi/m*(inv?-1:1); // FFT
 		// CD wi=CD(cos(z),sin(z)); // FFT
 		CD wi = root(m, inv); // NTT
-		for (int j = 0; j < n; j += m) {
+		for(int j = 0; j < n; j += m) {
 			CD w(1);
-			for (int k = j, k2 = j + m / 2; k2 < j + m; k++, k2++) {
+			for(int k = j, k2 = j + m / 2; k2 < j + m; k++, k2++) {
 				CD u = a[k];
 				CD v = a[k2] * w;
 				a[k] = u + v;
@@ -72,17 +69,16 @@ void dft(CD *a, int n, bool inv) {
 		}
 	}
 	// if(inv)fore(i,0,n)a[i]/=n; // FFT
-	if (inv) {		      // NTT
+	if(inv) {		      // NTT
 		CD z(pm(n, MOD - 2)); // pm: modular exponentiation
 		fore(i, 0, n) a[i] = a[i] * z;
 	}
 }
 
-poly multiply(poly &p1, poly &p2) {
+poly multiply(poly& p1, poly& p2) {
 	int n = p1.size() + p2.size() + 1;
 	int m = 1, cnt = 0;
-	while (m <= n)
-		m += m, cnt++;
+	while(m <= n) m += m, cnt++;
 	fore(i, 0, m) {
 		R[i] = 0;
 		fore(j, 0, cnt) R[i] = (R[i] << 1) | ((i >> j) & 1);
